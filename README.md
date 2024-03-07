@@ -2,6 +2,8 @@
 
 Based on Viesturz's work on [klipper-toolchanger](https://github.com/viesturz/klipper-toolchanger)
 
+Tool changing extension for [Klipper](https://www.klipper3d.org).
+
 # Installation
 
 To install this plugin, run the installation script using the following command over SSH. This script will download this GitHub repository to your RaspberryPi home directory, and symlink the files in the Klipper extra folder.
