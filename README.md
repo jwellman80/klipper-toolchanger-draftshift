@@ -1,32 +1,32 @@
 # klipper-toolchanger
 
-An assortment of Klipper extensions that I have made while working on [Tapchanger](https://github.com/viesturz/tapchanger)
+Based on Viesturz's work on [klipper-toolchanger](https://github.com/viesturz/klipper-toolchanger)
 
 # Installation
 
 To install this plugin, run the installation script using the following command over SSH. This script will download this GitHub repository to your RaspberryPi home directory, and symlink the files in the Klipper extra folder.
 
 ```
-wget -O - https://raw.githubusercontent.com/viesturz/klipper-toolchanger/main/install.sh | bash
+wget -O - https://raw.githubusercontent.com/Stealthchanger/klipper-toolchanger/main/install.sh | bash
 ```
 
 Then, add the following to your moonraker.conf to enable automatic updates:
+
 ```
 [update_manager klipper-toolchanger]
 type: git_repo
-channel: dev
-path: ~/klipper-toolchanger
-origin: https://github.com/viesturz/klipper-toolchanger.git
-managed_services: klipper
 primary_branch: main
-install_script: install.sh
+path: ~/klipper-toolchanger
+origin: https://github.com/StealthChanger/klipper-toolchanger.git
+managed_services: klipper
 ```
-Add the [macros.cfg](/macros.cfg) to your printer config.
+
+Add the [macros.cfg](macros.cfg) to your printer config.
 
 # Components
 
-* [Multi fan](/multi_fan.md) - multiple primary part fans.
-* [Toolchanger](/toolchanger.md) - tool management support.
-* [Tool probe](/tool_probe.md) - per tool Z probe.
-* [Rounded path](/rounded_path.md) - rounds the travel path corners for fast non-print moves.
-* [Tools calibrate](/tools_calibrate.md) - support for contact based XYZ offset calibration probes.
+* [Multi fan](multi_fan.md) - multiple primary part fans.
+* [Toolchanger](toolchanger.md) - tool management support.
+* [Tool probe](tool_probe.md) - per tool Z probe.
+* [Rounded path](rounded_path.md) - rounds the travel path corners for fast non-print moves.
+* [Tools calibrate](tools_calibrate.md) - support for contact based XYZ offset calibration probes.
