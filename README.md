@@ -27,7 +27,10 @@ origin: https://github.com/StealthChanger/klipper-toolchanger.git
 managed_services: klipper
 ```
 
-Add the [macros.cfg](macros.cfg) to your printer config.
+**Add to `printer.cfg` in this order**
+- [toolchanger-tool_detection.cfg](macros/toolchanger-tool_detection.cfg)
+- [toolchanger.cfg](macros/toolchanger.cfg)
+- [toolchanger-macros.cfg](macros/toolchanger-macros.cfg)
 
 # Components
 

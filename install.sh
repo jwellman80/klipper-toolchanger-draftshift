@@ -1,5 +1,6 @@
 #!/bin/bash
 
+CONFIG_PATH="${HOME}/printer_data"
 KLIPPER_PATH="${HOME}/klipper"
 INSTALL_PATH="${HOME}/klipper-toolchanger"
 
@@ -44,6 +45,11 @@ function link_extension {
     for file in "${INSTALL_PATH}"/klipper/extras/*.py; do ln -sfn "${file}" "${KLIPPER_PATH}/klippy/extras/"; done
 }
 
+function link_macros {
+    echo "[INSTALL] Linking macros to Klipper..."
+    for file in "${INSTALL_PATH}"/macros/*.cfg; do ln -sfn "${file}" "${CONFIG_PATH}/config/"; done
+}
+
 function restart_klipper {
     echo "[POST-INSTALL] Restarting Klipper..."
     sudo systemctl restart klipper
@@ -57,4 +63,5 @@ printf "======================================\n\n"
 preflight_checks
 check_download
 link_extension
+link_macros
 restart_klipper
