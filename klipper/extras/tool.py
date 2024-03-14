@@ -1,4 +1,4 @@
-# Support for toolchnagers
+# Support for toolchangers
 #
 # Copyright (C) 2023 Viesturs Zarins <viesturz@gmail.com>
 #
