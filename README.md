@@ -31,6 +31,7 @@ managed_services: klipper
 - [toolchanger-tool_detection.cfg](macros/toolchanger-tool_detection.cfg)
 - [toolchanger.cfg](macros/toolchanger.cfg)
 - [toolchanger-macros.cfg](macros/toolchanger-macros.cfg)
+- [toolchanger-homing.cfg](macros/toolchanger-homing.cfg)
 
 # Components
 
