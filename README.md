@@ -4,6 +4,10 @@ Based on Viesturz's work on [klipper-toolchanger](https://github.com/viesturz/kl
 
 Tool changing extension for [Klipper](https://www.klipper3d.org).
 
+# Klipper Compat Version
+- Klipper > Feb 15, 2024 (0cd16e9)
+- Danger Klipper > Feb 15, 2024 (0cd16e9)
+
 # Installation
 
 To install this plugin, run the installation script using the following command over SSH. This script will download this GitHub repository to your RaspberryPi home directory, and symlink the files in the Klipper extra folder.
