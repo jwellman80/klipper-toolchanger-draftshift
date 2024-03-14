@@ -24,6 +24,8 @@ class ToolProbe(probe.PrinterProbe):
         self.last_state = False
         self.last_z_result = 0.
         self.gcode_move = self.printer.load_object(config, "gcode_move")
+	# Fix for Danger Klipper compatability
+	self.drop_first_result = config.getboolean("drop_first_result", False)
         # Infer Z position to move to during a probe
         if config.has_section('stepper_z'):
             zconfig = config.getsection('stepper_z')
