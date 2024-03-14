@@ -1,8 +1,10 @@
-# Support for toolchnagers
+# Support for toolchangers
 #
 # Copyright (C) 2023 Viesturs Zarins <viesturz@gmail.com>
 #
 # This file may be distributed under the terms of the GNU GPLv3 license.
+#
+# Contribution 2024 by Justin F. Hallett <thesin@southofheaven.org>
 
 import ast, bisect
 
@@ -129,7 +131,8 @@ class Toolchanger:
         if tool_name:
             tool = self.printer.lookup_object(tool_name)
             restore_axis = gcmd.get('RESTORE_AXIS', tool.t_command_restore_axis)
-            self.select_tool(gcmd, tool, restore_axis)
+            force_pickup = gcmd.get('FORCE_PICKUP', None)
+            self.select_tool(gcmd, tool, restore_axis, force_pickup)
             return
         tool_nr = gcmd.get_int('T', None)
         if tool_nr is not None:
@@ -137,7 +140,8 @@ class Toolchanger:
             if not tool:
                 raise gcmd.error("Select tool: T%d not found" % (tool_nr))
             restore_axis = gcmd.get('RESTORE_AXIS', tool.t_command_restore_axis)
-            self.select_tool(gcmd, tool, restore_axis)
+            force_pickup = gcmd.get('FORCE_PICKUP', None)
+            self.select_tool(gcmd, tool, restore_axis, force_pickup)
             return
         raise gcmd.error("Select tool: Either TOOL or T needs to be specified")
 
@@ -216,18 +220,21 @@ class Toolchanger:
                 raise self.gcode.error('%s failed to initialize, error: %s' %
                                         (self.name, self.error_message))
 
-    def select_tool(self, gcmd, tool, restore_axis):
-        if self.status == STATUS_UNINITALIZED and self.initialize_on == INIT_FIRST_USE:
-            self.initialize()
-        if self.status != STATUS_READY:
-            raise gcmd.error(
-                "Cannot select tool, toolchanger status is " + self.status)
+    def select_tool(self, gcmd, tool, restore_axis, force_pickup):
+        if not force_pickup:
+            if self.status == STATUS_UNINITALIZED and self.initialize_on == INIT_FIRST_USE:
+                self.initialize()
 
-        if self.active_tool == tool:
-            gcmd.respond_info('Tool %s already selected' % tool.name if tool else None)
-            return
+            if self.status != STATUS_READY:
+                raise gcmd.error(
+                    "Cannot select tool, toolchanger status is " + self.status)
 
-        self.status = STATUS_CHANGING
+            if self.active_tool == tool:
+                gcmd.respond_info('Tool %s already selected' % tool.name if tool else None)
+                return
+
+            self.status = STATUS_CHANGING
+
         gcode_position = self.gcode_move.get_status()['gcode_position']
 
         extra_context = {
@@ -240,13 +247,14 @@ class Toolchanger:
         self.gcode.run_script_from_command(
             "SAVE_GCODE_STATE NAME=_toolchange_state")
 
-        self.run_gcode('before_change_gcode',
-                       self.before_change_gcode, extra_context)
+        if not force_pickup:
+          self.run_gcode('before_change_gcode',
+                         self.before_change_gcode, extra_context)
         self.gcode.run_script_from_command("SET_GCODE_OFFSET X=0.0 Y=0.0 Z=0.0")
 
-        if self.active_tool:
-            self.run_gcode('tool.dropoff_gcode',
-                           self.active_tool.dropoff_gcode, extra_context)
+        if not force_pickup and self.active_tool:
+           self.run_gcode('tool.dropoff_gcode',
+                          self.active_tool.dropoff_gcode, extra_context)
 
         if tool is not None:
             self._configure_toolhead_for_tool(tool)
@@ -263,7 +271,8 @@ class Toolchanger:
         if tool is not None:
             self._set_tool_gcode_offset(tool)
 
-        self.status = STATUS_READY
+        if not force_pickup:
+            self.status = STATUS_READY
         if tool:
             gcmd.respond_info('Selected tool %s (%s)' % (str(tool.tool_number), tool.name))
         else:
