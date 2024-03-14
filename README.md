@@ -33,7 +33,7 @@ managed_services: klipper
 - [toolchanger-macros.cfg](macros/toolchanger-macros.cfg)
 - [toolchanger-homing.cfg](macros/toolchanger-homing.cfg)
 
-**Make sure that `safe_z_home` is not defined as homing needs ot be overriden in [toolchanger-homing.cfg](macros/toolchanger-homing.cfg)**
+**Make sure that `safe_z_home` is not defined as homing needs to be overridden in [toolchanger-homing.cfg](macros/toolchanger-homing.cfg)**
 
 # Components
 
