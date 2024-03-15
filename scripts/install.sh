@@ -1,6 +1,7 @@
 #!/bin/bash
 
 REPO="https://github.com/StealthChanger/klipper-toolchanger.git"
+SERVICE="/etc/systemd/system/ToolChanger.service"
 CONFIG_PATH="${HOME}/printer_data/config"
 KLIPPER_PATH="${HOME}/klipper"
 INSTALL_PATH="${HOME}/klipper-toolchanger"
@@ -66,6 +67,13 @@ function remove_links {
         done
     done
     echo " complete!"
+
+    if [ -f "${SERVICE}" ]; then
+        echo -n "[UNINSTALL] Service..."
+        rm "${SERVICE}"
+        echo " complete!"
+    fi
+
     echo
 }
 
@@ -127,6 +135,25 @@ function add_updater {
     echo
 }
 
+function install_service {
+    if [ -f "${SERVICE}" ]; then
+        echo "[INSTALL] Service already installed. [SKIPPED]"
+        echo
+        return
+    fi
+
+    echo "[INSTALL] Installing Service..."
+
+    S=$(<"${INSTALL_PATH}"/ToolChanger.service)
+
+    S=$(sed "s/TC_USER/$(whoami)/g" <<< $S)
+
+    echo "$S" | sudo tee "${SERVICE}" > /dev/null
+
+    echo " complete!"
+    echo
+}
+
 function check_includes {
     echo -n "[CHECK-INSTALL] Checking for missing includes..."
     found=0
@@ -180,6 +207,7 @@ if [ $doinstall -gt 0 ]; then
     link_macros
     copy_examples
     add_updater
+    install_service
     check_includes
     restart_klipper
 
