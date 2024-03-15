@@ -124,6 +124,23 @@ function check_includes {
     echo
 }
 
+function add_updater {
+    echo -n "[INSTALL] Adding update manager to moonraker.conf..."
+
+    update_section=$(grep -c '\[update_manager led_effect\]' ${MOONRAKER_CONFIG_DIR}/moonraker.conf || true)
+    if [ "${update_section}" -eq 0 ]; then
+        echo -e "\n" >> ${MOONRAKER_CONFIG_DIR}/moonraker.conf
+        while read -r line; do
+            echo -e "${line}" >> ${MOONRAKER_CONFIG_DIR}/moonraker.conf
+        done < "$PWD/file_templates/moonraker_update.txt"
+        echo -e "\n" >> ${MOONRAKER_CONFIG_DIR}/moonraker.conf
+        echo "[OK]"
+        restart_moonraker
+        else
+        echo -e "[update_manager led_effect] already exists in moonraker.conf [SKIPPED]"
+    fi
+}
+
 function restart_klipper {
     echo -n "[POST-INSTALL] Restarting Klipper..."
     if ! sudo systemctl restart klipper; then
@@ -158,6 +175,7 @@ if [ $doinstall -gt 0 ]; then
     link_macros
     copy_examples
     check_includes
+    add_update
     restart_klipper
 
     printf "======================================\n"
