@@ -142,7 +142,7 @@ function install_service {
         return
     fi
 
-    echo "[INSTALL] Installing Service..."
+    echo -n "[INSTALL] Installing Service..."
 
     S=$(<"${INSTALL_PATH}"/scripts/ToolChanger.service)
 
