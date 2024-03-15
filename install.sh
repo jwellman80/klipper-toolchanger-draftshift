@@ -50,6 +50,11 @@ function link_macros {
     for file in "${INSTALL_PATH}"/macros/*.cfg; do ln -sfn "${file}" "${CONFIG_PATH}/config/"; done
 }
 
+function copy_examples {
+    echo "[INSTALL] Copying in examples to Klipper..."
+    for file in "${INSTALL_PATH}"/examples/*.cfg; do cp -n "${file}" "${CONFIG_PATH}/config/"; done
+}
+
 function restart_klipper {
     echo "[POST-INSTALL] Restarting Klipper..."
     sudo systemctl restart klipper
@@ -64,4 +69,5 @@ preflight_checks
 check_download
 link_extension
 link_macros
+copy_examples
 restart_klipper

@@ -29,9 +29,15 @@ managed_services: klipper
 
 **Add to `printer.cfg` in this order**
 - [toolchanger-tool_detection.cfg](macros/toolchanger-tool_detection.cfg)
-- [toolchanger.cfg](macros/toolchanger.cfg)
+- [toolchanger.cfg](examples/toolchanger.cfg)
 - [toolchanger-macros.cfg](macros/toolchanger-macros.cfg)
 - [toolchanger-homing.cfg](macros/toolchanger-homing.cfg)
+
+**Optional**
+- [toolchanger-usermacros.cfg](examples/toolchanger-usermacros.cfg)
+- [calibrate-offsets.cfg](examples/calibrate-offsets.cfg)
+- [calibrate-offsets-macros.cfg](macros/calibrate-offsets-macros.cfg)
+
 
 **Make sure that `safe_z_home` is not defined as homing needs to be overridden in [toolchanger-homing.cfg](macros/toolchanger-homing.cfg)**
 
