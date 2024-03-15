@@ -1,7 +1,7 @@
 #!/bin/bash
 
 REPO="https://github.com/StealthChanger/klipper-toolchanger.git"
-CONFIG_PATH="${HOME}/printer_data"
+CONFIG_PATH="${HOME}/printer_data/config"
 KLIPPER_PATH="${HOME}/klipper"
 INSTALL_PATH="${HOME}/klipper-toolchanger"
 
@@ -48,14 +48,14 @@ function check_download {
             exit -1
         fi
     else
-        echo "[DOWNLOAD] repository already found locally."
+        echo "[DOWNLOAD] repository already found locally. [SKIPPED]"
     fi
     echo
 }
 
 function remove_links {
     echo -n "[UNINSTALL] Remove old links..."
-    for path in "${KLIPPER_PATH}"/klippy/extras/ "${CONFIG_PATH}"/config/; do
+    for path in "${KLIPPER_PATH}"/klippy/extras/ "${CONFIG_PATH}"/; do
         for file in $(find "${path}" -type l); do
             if readlink -f "${file}" | grep -q "${INSTALL_PATH}"; then
                 if ! rm ${file}; then
@@ -84,7 +84,7 @@ function link_extension {
 function link_macros {
     echo -n "[INSTALL] Linking macros to Klipper..."
     for file in "${INSTALL_PATH}"/macros/*.cfg; do
-        if ! ln -sfn ${file} "${CONFIG_PATH}"/config/; then
+        if ! ln -sfn ${file} "${CONFIG_PATH}"/; then
             echo " failed!"
             exit -1
         fi
@@ -96,7 +96,7 @@ function link_macros {
 function copy_examples {
     echo -n "[INSTALL] Copying in examples to Klipper..."
     for file in "${INSTALL_PATH}"/examples/*.cfg; do
-        if ! cp -n ${file} "${CONFIG_PATH}"/config/; then
+        if ! cp -n ${file} "${CONFIG_PATH}"/; then
             echo " failed!"
             exit -1
         fi
@@ -105,12 +105,34 @@ function copy_examples {
     echo
 }
 
+function add_updater {
+    if [ ! -f "${CONFIG_PATH}"/moonraker.conf ]; then
+        echo "[INSTALL] No moonraker config found."
+        echo
+        return
+    fi
+
+    if [ "$(grep -c "$(head -n1 "${INSTALL_PATH}"/scripts/moonraker_update.txt | sed -e 's/\[/\\\[/' -e 's/\]/\\\]/')" "${CONFIG_PATH}"/moonraker.conf || true)" -eq 0 ]; then
+        echo -n "[INSTALL] Adding update manager to moonraker.conf..."
+        echo -e "\n" >> "${CONFIG_PATH}"/moonraker.conf
+        while read -r line; do
+            echo -e "${line}" >> "${CONFIG_PATH}"/moonraker.conf
+        done < "${INSTALL_PATH}"/scripts/moonraker_update.txt
+        echo -e "\n" >> "${CONFIG_PATH}"/moonraker.conf
+        echo " complete!"
+        sudo systemctl restart moonraker
+    else
+        echo "[INSTALL] Moonraker update entry found. [SKIPPED]"
+    fi
+    echo
+}
+
 function check_includes {
     echo -n "[CHECK-INSTALL] Checking for missing includes..."
     found=0
     for file in "${INSTALL_PATH}"/macros/*.cfg; do
         filename=$(basename ${file});
-        if ! grep -q "include ${filename}" "${CONFIG_PATH}"/config/printer.cfg; then
+        if ! grep -q "include ${filename}" "${CONFIG_PATH}"/printer.cfg; then
             if [ $found -lt 1 ]; then
                 echo " found!"
                 found=1
@@ -122,23 +144,6 @@ function check_includes {
         echo " complete!"
     fi
     echo
-}
-
-function add_updater {
-    echo -n "[INSTALL] Adding update manager to moonraker.conf..."
-
-    update_section=$(grep -c '\[update_manager led_effect\]' ${MOONRAKER_CONFIG_DIR}/moonraker.conf || true)
-    if [ "${update_section}" -eq 0 ]; then
-        echo -e "\n" >> ${MOONRAKER_CONFIG_DIR}/moonraker.conf
-        while read -r line; do
-            echo -e "${line}" >> ${MOONRAKER_CONFIG_DIR}/moonraker.conf
-        done < "$PWD/file_templates/moonraker_update.txt"
-        echo -e "\n" >> ${MOONRAKER_CONFIG_DIR}/moonraker.conf
-        echo "[OK]"
-        restart_moonraker
-        else
-        echo -e "[update_manager led_effect] already exists in moonraker.conf [SKIPPED]"
-    fi
 }
 
 function restart_klipper {
@@ -174,8 +179,8 @@ if [ $doinstall -gt 0 ]; then
     link_extension
     link_macros
     copy_examples
+    add_updater
     check_includes
-    add_update
     restart_klipper
 
     printf "======================================\n"
