@@ -19,11 +19,11 @@ wget -O - https://raw.githubusercontent.com/Stealthchanger/klipper-toolchanger/m
 Then, add the following to your moonraker.conf to enable automatic updates:
 
 ```
-[update_manager klipper-toolchanger]
+[update_manager ToolChanger]
 type: git_repo
 path: ~/klipper-toolchanger
 origin: https://github.com/StealthChanger/klipper-toolchanger.git
-is_system_service: False
+is_system_service: True
 managed_services: klipper
 ```
 
