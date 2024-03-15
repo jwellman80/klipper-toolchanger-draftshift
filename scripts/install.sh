@@ -35,6 +35,7 @@ function check_download {
     else
         if [ "$(cd "${INSTALL_PATH}" && git remote get-url origin)" != "${REPO}" ]; then
             echo "[DOWNLOAD] Incorrect repository found in ${INSTALL_PATH}, remove and rerun install!"
+            echo " -> rm -rf \"${INSTALL_PATH}\""
             exit -1
         fi
     fi
