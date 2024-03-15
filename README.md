@@ -16,17 +16,6 @@ To install this plugin, run the installation script using the following command 
 wget -O - https://raw.githubusercontent.com/Stealthchanger/klipper-toolchanger/main/scripts/install.sh | bash
 ```
 
-Then, add the following to your moonraker.conf to enable automatic updates:
-
-```
-[update_manager ToolChanger]
-type: git_repo
-path: ~/klipper-toolchanger
-origin: https://github.com/StealthChanger/klipper-toolchanger.git
-is_system_service: True
-managed_services: klipper
-```
-
 **Add to `printer.cfg` in this order**
 - [toolchanger-tool_detection.cfg](macros/toolchanger-tool_detection.cfg)
 - [toolchanger.cfg](examples/toolchanger.cfg)
