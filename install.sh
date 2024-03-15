@@ -33,10 +33,8 @@ function check_download {
         doclone=1
     else
         if [ "$(cd "${INSTALL_PATH}" && git remote get-url origin)" != "${REPO}" ]; then
-            echo -n "[DOWNLOAD] Removing incorrect repository..."
-            rm -rf "${INSTALL_PATH}"
-            doclone=1
-            echo " complete!"
+            echo "[DOWNLOAD] Incorrect repository found in ${INSTALL_PATH}, remove and rerun install!"
+            exit -1
         fi
     fi
 
