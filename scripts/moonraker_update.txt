@@ -3,4 +3,4 @@ type: git_repo
 path: ~/klipper-toolchanger
 origin: https://github.com/StealthChanger/klipper-toolchanger.git
 is_system_service: True
-managed_services: klipper
+managed_services: ToolChanger
