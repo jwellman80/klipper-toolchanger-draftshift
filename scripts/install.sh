@@ -144,7 +144,7 @@ function install_service {
 
     echo "[INSTALL] Installing Service..."
 
-    S=$(<"${INSTALL_PATH}"/ToolChanger.service)
+    S=$(<"${INSTALL_PATH}"/scripts/ToolChanger.service)
 
     S=$(sed "s/TC_USER/$(whoami)/g" <<< $S)
 
