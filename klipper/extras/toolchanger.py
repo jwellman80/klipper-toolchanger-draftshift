@@ -48,12 +48,12 @@ class Toolchanger:
         config.getfloat('gcode_y_offset', None)
         config.getfloat('gcode_z_offset', None)
         config.get('t_command_restore_axis', None)
-        config.get('homing_current', 0.5)
-        config.get('stepper_x_driver', 'tmc5160')
-        config.get('sensorless_x', True)
-        config.get('stepper_y_driver', 'tmc5160')
-        config.get('sensorless_y', False)
-        config.get('homing_usetap', True)
+        self.homing_current = config.getfloat('homing_current', 0.5)
+        self.stepper_x_driver = config.get('stepper_x_driver', 'tmc5160')
+        self.sensorless_x = config.getboolean('sensorless_x', True)
+        self.stepper_y_driver = config.get('stepper_y_driver', 'tmc5160')
+        self.sensorless_y = config.getboolean('sensorless_y', False)
+        self.homing_usetap = config.getboolean('homing_usetap', True)
         config.get('extruder', None)
         config.get('fan', None)
         config.get_prefix_options('params_')
@@ -100,6 +100,12 @@ class Toolchanger:
         return {** self.params,
                 'name': self.name,
                 'status': self.status,
+                'homing_usetap': self.homing_usetap,
+                'homing_current': self.homing_current,
+                'stepper_x_driver': self.stepper_x_driver,
+                'sensorless_x': self.sensorless_x,
+                'stepper_y_driver': self.stepper_y_driver,
+                'sensorless_y': self.sensorless_y,
                 'tool': self.active_tool.name if self.active_tool else None,
                 'tool_number': self.active_tool.tool_number if self.active_tool else -1,
                 'tool_numbers': self.tool_numbers,
