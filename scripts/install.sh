@@ -43,7 +43,7 @@ function check_download {
     if [ $doclone -gt 0 ]; then
         echo -n "[DOWNLOAD] Cloning repository..."
         if git -C $installdirname clone ${REPO} $installbasename; then
-            chmod +x ${INSTALL_PATH}/install.sh
+            chmod +x ${INSTALL_PATH}/scripts/install.sh
             echo " complete!"
         else
             echo " failed!"
