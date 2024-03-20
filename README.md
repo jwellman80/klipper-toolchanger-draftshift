@@ -10,6 +10,8 @@ Tool changing extension for [Klipper](https://www.klipper3d.org).
 
 # Installation
 
+**NOTE:** `python3` is required for this mod, make sure your klipper install is using `python3`, otherwise you need to reinstall klipper with `python3` before you continue
+
 To install this plugin, run the installation script using the following command over SSH. This script will download this GitHub repository to your RaspberryPi home directory, and symlink the files in the Klipper extra folder.
 
 ```
