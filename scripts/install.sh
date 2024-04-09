@@ -198,15 +198,21 @@ echo "- Klipper toolchanger install script -"
 printf "======================================\n\n"
 
 doinstall=1;
+withklipper=1;
 if [ $# -gt 0 ]; then
     if [ "$1" == "uninstall" ]; then
         doinstall=0;
+    fi
+    if [ "$1" == "skipklipper" ]; then
+        withklipper=0;
     fi
 fi
 
 # Run steps
 if [ $doinstall -gt 0 ]; then
-    preflight_checks
+    if [ $withklipper -gt 0 ]; then
+        preflight_checks
+    fi
     check_download
 fi
 
@@ -219,7 +225,9 @@ if [ $doinstall -gt 0 ]; then
     add_updater
     install_service
     check_includes
-    restart_klipper
+    if [ $withklipper -gt 0 ]; then
+        restart_klipper
+    fi
 
     printf "======================================\n"
     echo "- If you are upgrading maybe sure to -"
