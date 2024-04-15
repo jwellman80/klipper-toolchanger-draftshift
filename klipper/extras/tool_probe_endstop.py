@@ -6,6 +6,8 @@
 import logging
 import pins
 
+import . from pause_resume
+
 # Virtual endstop, using a tool attached Z probe in a toolchanger setup.
 # Tool endstop change may be done either via SET_ACTIVE_TOOL_PROBE TOOL=99
 # Or via auto-detection of single open tool probe via DETECT_ACTIVE_TOOL_PROBE
@@ -242,7 +244,7 @@ class ToolProbeEndstop:
         if is_triggered:
             self.crash_lasttime = eventtime
             self.reactor.register_callback(lambda _: self._probe_triggered_delayed(eventtime),
-                                           self.crash_mintime)
+                                           eventtime + self.crash_mintime)
         else:
             self.crash_lasttime = 0.
 
@@ -252,6 +254,7 @@ class ToolProbeEndstop:
             return
         self.crash_detection_active = False
         self.crash_gcode.run_gcode_from_command()
+        pause_resume.cmd_PAUSE()
 
 # Endstop wrapper that routes commands to the selected tool probe.
 class ToolProbeEndstopWrapper:

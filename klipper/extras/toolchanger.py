@@ -67,6 +67,10 @@ class Toolchanger:
 
         self.printer.register_event_handler("homing:home_rails_begin",
                                             self._handle_home_rails_begin)
+        self.printer.register_event_handler('klippy:connect',
+                                            self._handle_connect)
+        self.printer.register_event_handler("klippy:shutdown",
+                                            self._handle_shutdown)
         self.gcode.register_command("INITIALIZE_TOOLCHANGER",
                                     self.cmd_INITIALIZE_TOOLCHANGER,
                                     desc=self.cmd_INITIALIZE_TOOLCHANGER_help)
@@ -74,8 +78,8 @@ class Toolchanger:
                                     self.cmd_SET_TOOL_TEMPERATURE,
                                     desc=self.cmd_SET_TOOL_TEMPERATURE_help)
         self.gcode.register_command("SELECT_TOOL",
-                                   self.cmd_SELECT_TOOL,
-                                   desc=self.cmd_SELECT_TOOL_help)
+                                    self.cmd_SELECT_TOOL,
+                                    desc=self.cmd_SELECT_TOOL_help)
         self.gcode.register_command("SELECT_TOOL_ERROR",
                                     self.cmd_SELECT_TOOL_ERROR,
                                     desc=self.cmd_SELECT_TOOL_ERROR_help)
@@ -96,8 +100,16 @@ class Toolchanger:
         if self.initialize_on == INIT_ON_HOME and self.status == STATUS_UNINITALIZED:
             self.initialize()
 
+    def _handle_connect(self):
+        self.status = STATUS_UNINITALIZED
+        self.active_tool = None
+
+    def _handle_shutdown(self):
+        self.status = STATUS_UNINITALIZED
+        self.active_tool = None
+
     def get_status(self, eventtime):
-        return {** self.params,
+        return {**self.params,
                 'name': self.name,
                 'status': self.status,
                 'homing_usetap': self.homing_usetap,
@@ -112,7 +124,7 @@ class Toolchanger:
                 'tool_names': self.tool_names,
                 }
 
-    def assign_tool(self, tool, number, prev_number, replace = False):
+    def assign_tool(self, tool, number, prev_number, replace=False):
         if number in self.tools and not replace:
             raise Exception('Duplicate tools with number %s' % (str(number)))
         if prev_number in self.tools:
@@ -125,6 +137,7 @@ class Toolchanger:
         self.tool_names.insert(position, tool.name)
 
     cmd_INITIALIZE_TOOLCHANGER_help = "Initialize the toolchanger"
+
     def cmd_INITIALIZE_TOOLCHANGER(self, gcmd):
         tool_name = gcmd.get('TOOL', None)
         tool_number = gcmd.get_int('T', None)
@@ -138,10 +151,13 @@ class Toolchanger:
         self.initialize(tool)
 
     cmd_SELECT_TOOL_help = 'Select active tool'
+
     def cmd_SELECT_TOOL(self, gcmd):
         tool_name = gcmd.get('TOOL', None)
         if tool_name:
             tool = self.printer.lookup_object(tool_name)
+            if not tool:
+                raise gcmd.error("Select tool: TOOL=%s not found" % (tool_name))
             restore_axis = gcmd.get('RESTORE_AXIS', tool.t_command_restore_axis)
             force_pickup = gcmd.get('FORCE_PICKUP', None)
             self.select_tool(gcmd, tool, restore_axis, force_pickup)
@@ -157,13 +173,16 @@ class Toolchanger:
             return
         raise gcmd.error("Select tool: Either TOOL or T needs to be specified")
 
-    cmd_SET_TOOL_TEMPERATURE_help = 'Set temperature for tool'
+    cmd_S ET_TOOL_TEMPERATURE_help = 'Set temperature for tool'
+
     def cmd_SET_TOOL_TEMPERATURE(self, gcmd):
         temp = gcmd.get_float('TARGET', 0.)
         wait = gcmd.get_int('WAIT', 0) == 1
         tool = self._get_tool_from_gcmd(gcmd)
         if not tool.extruder:
-            raise gcmd.error("SET_TOOL_TEMPERATURE: No extruder specified for tool %s" % (tool.name))
+            raise gcmd.error(
+                "SET_TOOL_TEMPERATURE: No extruder specified for tool %s" % (
+                    tool.name))
         heaters = self.printer.lookup_object('heaters')
         heaters.set_temperature(tool.extruder.get_heater(), temp, wait)
 
@@ -175,15 +194,18 @@ class Toolchanger:
         elif tool_nr is not None:
             tool = self.lookup_tool(tool_nr)
             if not tool:
-                raise gcmd.error("SET_TOOL_TEMPERATURE: T%d not found" % (tool_nr))
+                raise gcmd.error(
+                    "SET_TOOL_TEMPERATURE: T%d not found" % (tool_nr))
         else:
             tool = self.active_tool
             if not tool:
-                raise gcmd.error("SET_TOOL_TEMPERATURE: No tool specified and no active tool")
+                raise gcmd.error(
+                    "SET_TOOL_TEMPERATURE: No tool specified and no active tool")
         return tool
 
 
     cmd_SELECT_TOOL_ERROR_help = "Abort tool change and mark the active toolchanger as failed"
+
     def cmd_SELECT_TOOL_ERROR(self, gcmd):
         if self.status != STATUS_CHANGING and self.status != STATUS_INITIALIZING:
             gcmd.respond_info(
@@ -193,17 +215,21 @@ class Toolchanger:
         self.error_message = gcmd.get('MESSAGE', '')
 
     cmd_UNSELECT_TOOL_help = "Unselect active tool without selecting a new one"
+
     def cmd_UNSELECT_TOOL(self, gcmd):
         if not self.active_tool:
             return
-        restore_axis = gcmd.get('RESTORE_AXIS', self.active_tool.t_command_restore_axis)
+        restore_axis = gcmd.get('RESTORE_AXIS',
+                                self.active_tool.t_command_restore_axis)
         self.select_tool(gcmd, None, restore_axis)
 
     cmd_TEST_TOOL_DOCKING_help = "Unselect active tool and select it again"
+
     def cmd_TEST_TOOL_DOCKING(self, gcmd):
         if not self.active_tool:
             raise gcmd.error("Cannot test tool, no active tool")
-        restore_axis = gcmd.get('RESTORE_AXIS', self.active_tool.t_command_restore_axis)
+        restore_axis = gcmd.get('RESTORE_AXIS',
+                                self.active_tool.t_command_restore_axis)
         self.test_tool_selection(gcmd, restore_axis)
 
     def initialize(self, select_tool=None):
@@ -227,10 +253,11 @@ class Toolchanger:
             if self.status == STATUS_INITIALIZING:
                 self.status = STATUS_READY
                 self.gcode.respond_info('%s initialized, active %s' %
-                                        (self.name, self.active_tool.name if self.active_tool else None))
+                                        (self.name,
+                                         self.active_tool.name if self.active_tool else None))
             else:
                 raise self.gcode.error('%s failed to initialize, error: %s' %
-                                        (self.name, self.error_message))
+                                       (self.name, self.error_message))
 
     def select_tool(self, gcmd, tool, restore_axis, force_pickup):
         if not force_pickup:
@@ -242,7 +269,8 @@ class Toolchanger:
                     "Cannot select tool, toolchanger status is " + self.status)
 
             if self.active_tool == tool:
-                gcmd.respond_info('Tool %s already selected' % tool.name if tool else None)
+                gcmd.respond_info(
+                'Tool %s already selected' % tool.name if tool else None)
                 return
 
             self.status = STATUS_CHANGING
@@ -268,8 +296,8 @@ class Toolchanger:
            self.run_gcode('tool.dropoff_gcode',
                           self.active_tool.dropoff_gcode, extra_context)
 
+        self._configure_toolhead_for_tool(tool)
         if tool is not None:
-            self._configure_toolhead_for_tool(tool)
             self.run_gcode('tool.pickup_gcode',
                            tool.pickup_gcode, extra_context)
             self.run_gcode('after_change_gcode',
@@ -286,13 +314,15 @@ class Toolchanger:
         if not force_pickup:
             self.status = STATUS_READY
         if tool:
-            gcmd.respond_info('Selected tool %s (%s)' % (str(tool.tool_number), tool.name))
+            gcmd.respond_info(
+                'Selected tool %s (%s)' % (str(tool.tool_number), tool.name))
         else:
             gcmd.respond_info('Tool unselected')
 
     def test_tool_selection(self, gcmd, restore_axis):
         if self.status != STATUS_READY:
-            raise gcmd.error("Cannot test tool, toolchanger status is " + self.status)
+            raise gcmd.error(
+                "Cannot test tool, toolchanger status is " + self.status)
         tool = self.active_tool
         if not tool:
             raise gcmd.error("Cannot test tool, no active tool")
@@ -302,7 +332,8 @@ class Toolchanger:
         extra_context = {
             'dropoff_tool': self.active_tool.name if self.active_tool else None,
             'pickup_tool': tool.name if tool else None,
-            'restore_position': self._restore_position_with_tool_offset(gcode_position, restore_axis, tool)
+            'restore_position': self._restore_position_with_tool_offset(
+                gcode_position, restore_axis, None)
         }
 
         self.gcode.run_script_from_command("SET_GCODE_OFFSET X=0.0 Y=0.0 Z=0.0")
@@ -344,8 +375,10 @@ class Toolchanger:
         self.gcode.run_script_from_command(cmd)
         mesh = self.printer.lookup_object('bed_mesh')
         if mesh and mesh.get_mesh():
-            self.gcode.run_script_from_command('BED_MESH_OFFSET X=%.6f Y=%.6f Z=%.6f' %
-                                                (-tool.gcode_x_offset, -tool.gcode_y_offset, -tool.gcode_z_offset))
+            self.gcode.run_script_from_command(
+                'BED_MESH_OFFSET X=%.6f Y=%.6f ZFADE=%.6f' %
+                (-tool.gcode_x_offset, -tool.gcode_y_offset,
+                 -tool.gcode_z_offset))
 
     def _restore_position_with_tool_offset(self, position, axis, tool):
         result = {}
@@ -376,7 +409,8 @@ class Toolchanger:
         try:
             context = {
                 **template.create_template_context(),
-                'tool': self.active_tool.get_status(curtime) if self.active_tool else {},
+                'tool': self.active_tool.get_status(
+                    curtime) if self.active_tool else {},
                 'toolchanger': self.get_status(curtime),
                 **extra_context,
             }
@@ -384,8 +418,9 @@ class Toolchanger:
         except Exception as e:
             raise Exception("Script running error: %s" % (str(e)))
         if current_status != self.status:
-            raise Exception("Unexpected status during %s, status = %s, message = %s, aborting" % (
-                name, self.status, self.error_message))
+            raise Exception(
+                "Unexpected status during %s, status = %s, message = %s, aborting" % (
+                    name, self.status, self.error_message))
 
     def cmd_SET_TOOL_PARAMETER(self, gcmd):
         tool = self._get_tool_from_gcmd(gcmd)
@@ -409,6 +444,7 @@ class Toolchanger:
         configfile = self.printer.lookup_object('configfile')
         configfile.set(tool.name, name, tool.params[name])
 
+
 def get_params_dict(config):
     result = {}
     for option in config.get_prefix_options('params_'):
@@ -420,8 +456,10 @@ def get_params_dict(config):
                     option, config.get_name()))
     return result
 
+
 def load_config(config):
     return Toolchanger(config)
+
 
 def load_config_prefix(config):
     return Toolchanger(config)
