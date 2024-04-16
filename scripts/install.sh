@@ -1,6 +1,6 @@
 #!/bin/bash
 
-REPO="https://github.com/StealthChanger/klipper-toolchanger.git"
+REPO="https://github.com/DraftShift/klipper-toolchanger.git"
 SERVICE="/etc/systemd/system/ToolChanger.service"
 CONFIG_PATH="${HOME}/printer_data/config"
 KLIPPER_PATH="${HOME}/klipper"
