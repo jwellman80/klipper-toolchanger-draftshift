@@ -1,6 +1,6 @@
 #!/bin/bash
 
-REPO="https://github.com/DraftShift/klipper-toolchanger.git"
+REPO="DraftShift/klipper-toolchanger.git"
 SERVICE="/etc/systemd/system/ToolChanger.service"
 CONFIG_PATH="${HOME}/printer_data/config"
 KLIPPER_PATH="${HOME}/klipper"
@@ -33,7 +33,7 @@ function check_download {
     if [ ! -d "${INSTALL_PATH}" ]; then
         doclone=1
     else
-        if [ "$(cd "${INSTALL_PATH}" && git remote get-url origin)" != "${REPO}" ]; then
+        if [[ "$(cd "${INSTALL_PATH}" && git remote get-url origin)" != *"${REPO}"* ]]; then
             echo "[DOWNLOAD] Incorrect repository found in ${INSTALL_PATH}, remove and rerun install!"
             echo " -> rm -rf \"${INSTALL_PATH}\""
             exit -1
