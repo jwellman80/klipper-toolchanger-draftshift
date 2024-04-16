@@ -173,7 +173,7 @@ class Toolchanger:
             return
         raise gcmd.error("Select tool: Either TOOL or T needs to be specified")
 
-    cmd_S ET_TOOL_TEMPERATURE_help = 'Set temperature for tool'
+    cmd_SET_TOOL_TEMPERATURE_help = 'Set temperature for tool'
 
     def cmd_SET_TOOL_TEMPERATURE(self, gcmd):
         temp = gcmd.get_float('TARGET', 0.)
