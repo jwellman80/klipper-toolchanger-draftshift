@@ -122,7 +122,7 @@ class Tool:
                     "SYNC_EXTRUDER_MOTION EXTRUDER='%s' MOTION_QUEUE=" % (hotend_extruder, ))
                 gcode.run_script_from_command(
                     "SYNC_EXTRUDER_MOTION EXTRUDER='%s' MOTION_QUEUE='%s'" % (self.extruder_stepper_name, hotend_extruder, ))
-        if self.fan:
+        if self.fan_name[:9] == 'multi_fan':
             gcode.run_script_from_command(
                 "ACTIVATE_FAN FAN='%s'" % (self.fan.name,))
     def deactivate(self):
