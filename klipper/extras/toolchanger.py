@@ -290,8 +290,10 @@ class Toolchanger:
         extra_context = {
             'dropoff_tool': self.active_tool.name if self.active_tool else None,
             'pickup_tool': tool.name if tool else None,
-            'restore_position': self._restore_position_with_tool_offset(
-                gcode_position, restore_axis, tool)
+            'restore_position': self._position_with_tool_offset(
+                gcode_position, restore_axis, tool),
+            'start_position': self._position_with_tool_offset(
+                gcode_position, 'xyz', tool)
         }
 
         self.gcode.run_script_from_command(
@@ -342,7 +344,7 @@ class Toolchanger:
         extra_context = {
             'dropoff_tool': self.active_tool.name if self.active_tool else None,
             'pickup_tool': tool.name if tool else None,
-            'restore_position': self._restore_position_with_tool_offset(
+            'restore_position': self._position_with_tool_offset(
                 gcode_position, restore_axis, None)
         }
 
@@ -390,7 +392,7 @@ class Toolchanger:
                 (-tool.gcode_x_offset, -tool.gcode_y_offset,
                  -tool.gcode_z_offset))
 
-    def _restore_position_with_tool_offset(self, position, axis, tool):
+    def _position_with_tool_offset(self, position, axis, tool):
         result = {}
         for i in axis:
             index = XYZ_TO_INDEX[i]
@@ -410,7 +412,7 @@ class Toolchanger:
     def _restore_axis(self, position, axis, tool):
         if not axis:
             return
-        pos = self._restore_position_with_tool_offset(position, axis, tool)
+        pos = self._position_with_tool_offset(position, axis, tool)
         self.gcode_move.cmd_G1(self.gcode.create_gcode_command("G0", "G0", pos))
 
     def run_gcode(self, name, template, extra_context={}):
