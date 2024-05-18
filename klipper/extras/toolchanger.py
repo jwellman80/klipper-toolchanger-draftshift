@@ -267,7 +267,7 @@ class Toolchanger:
                 raise self.gcode.error('%s failed to initialize, error: %s' %
                                        (self.name, self.error_message))
 
-    def select_tool(self, gcmd, tool, restore_axis, force_pickup):
+    def select_tool(self, gcmd, tool, restore_axis, force_pickup=None):
         self.ensure_homed(gcmd)
 
         if not force_pickup:
