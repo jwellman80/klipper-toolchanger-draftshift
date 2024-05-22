@@ -41,9 +41,9 @@ class MultiFanController:
         self.active_fan = None
         self.requested_speed = None
         gcode = config.get_printer().lookup_object('gcode')
-        M106_old = gcode.register_command("M106")
+        M106_old = gcode.register_command("M106", None)
         gcode.register_command("M106", self.cmd_M106)
-        M107_old = gcode.register_command("M107")
+        M107_old = gcode.register_command("M107", None)
         gcode.register_command("M107", self.cmd_M107)
     def activate_fan_if_not_present(self, fan):
         if not self.active_fan:
