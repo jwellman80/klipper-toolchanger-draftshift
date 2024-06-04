@@ -26,17 +26,20 @@ wget -O - https://raw.githubusercontent.com/Stealthchanger/klipper-toolchanger/m
 - [toolchanger-macros.cfg](macros/toolchanger-macros.cfg)
 - [toolchanger-homing.cfg](macros/toolchanger-homing.cfg)
 
-**Optional**
+**Optional** these files are a good start for user macros and can be modified.  Make sure to keep the `_TOOL` and `_TOOLCHANGER` macros in the right macros as they add special features.
 - [toolchanger-usermacros.cfg](examples/toolchanger-usermacros.cfg)
+- [toolchanger-extra-macro-examples.cfg](examples/toolchanger-extra-macro-examples.cfg)
 - [calibrate-offsets.cfg](examples/calibrate-offsets.cfg)
 - [calibrate-offsets-macros.cfg](macros/calibrate-offsets-macros.cfg)
 
 
 **Make sure that `safe_z_home` is not defined as homing needs to be overridden in [toolchanger-homing.cfg](macros/toolchanger-homing.cfg)**
 
+**If you choose to not use `toolchanger-extra-macro-examples.cfg` please make sure to use the `_TOOLCHANGER_PRINT_START_START` and `_TOOLCHANGER_PRINT_START_END` in your `PRINT_START` macro, also `_TOOLCHANGER_PRINT_END_START` and `_TOOLCHANGER_PRINT_END_END` in your `PRINT_END` macro.  These are important to initialize the toolchanger as well as special protection calls.**
+
 # Components
 
-* [Multi fan](multi_fan.md) - multiple primary part fans.
+* ~~[Multi fan](multi_fan.md) - multiple primary part fans.~~ **OBSOLETE**
 * [Toolchanger](toolchanger.md) - tool management support.
 * [Tool probe](tool_probe.md) - per tool Z probe.
 * [Rounded path](rounded_path.md) - rounds the travel path corners for fast non-print moves.
