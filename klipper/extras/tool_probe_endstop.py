@@ -6,8 +6,6 @@
 import logging
 import pins
 
-from .pause_resume import PauseResume
-
 # Virtual endstop, using a tool attached Z probe in a toolchanger setup.
 # Tool endstop change may be done either via SET_ACTIVE_TOOL_PROBE TOOL=99
 # Or via auto-detection of single open tool probe via DETECT_ACTIVE_TOOL_PROBE
@@ -264,7 +262,11 @@ class ToolProbeEndstop:
         if self.crash_detection_active:
             self.crash_detection_active = False
             self.crash_gcode.run_gcode_from_command()
-            PauseResume:cmd_PAUSE()
+            pause_resume = self.printer.lookup_object('pause_resume')
+            if pause_resume:
+                pause_resume.cmd_PAUSE(gcmd)
+            else:
+                gcmd.respond_info("PauseResume module not loaded")
 
 # Endstop wrapper that routes commands to the selected tool probe.
 class ToolProbeEndstopWrapper:
