@@ -32,6 +32,7 @@ wget -O - https://raw.githubusercontent.com/Stealthchanger/klipper-toolchanger/m
 - [calibrate-offsets.cfg](examples/calibrate-offsets.cfg)
 - [calibrate-offsets-macros.cfg](macros/calibrate-offsets-macros.cfg)
 
+[PRINT_START slicer info](PRINT_START.md)
 
 **Make sure that `safe_z_home` is not defined as homing needs to be overridden in [toolchanger-homing.cfg](macros/toolchanger-homing.cfg)**
 
