@@ -6,7 +6,7 @@ Provides the basic structure and links into GCodes.
 Not opinionated how the tool change happens and suitable for physical tools as well as MMUs. 
 All the actual tool changing motions to be provided as gcode macros.
 
-See [This config](https://github.com/viesturz/tapchanger/tree/main/Klipper/config-example) for a comprehensive example. 
+See [This config](/examples) for a comprehensive example. 
 
 # Status
 
@@ -48,6 +48,22 @@ and will provide a default value for all of its tools.
   # When required axis are not homed
   # - abort: aborts the command
   # - home: attempts to home the axis
+# homing_current: 0.5 
+  # Current to set X/Y steppers to during homing for sensorless homing
+# stepper_driver: tmc5160
+  # The stepper driver type for X/Y for sensorless homing
+# sensorless_x: True
+  # Boolean to enable senserless homing on the X axis
+# sensorless_y: False
+  # Boolean to enable senserless homing on the Y axis
+# homing_usetap: True
+  # Boolean to use tap for Z homing, requires a ZSWITCH if set to False
+# homing_toolless: False
+  # Boolean to enable toolless homing, requires a ZSWITCH if set to True
+  # NOTE: if no tool is present it will pick up T0
+# homing_safe_y: 20.0
+  # The amount to move on the Y axis after homing Y, this is important for
+  # switch homing so have the proper distance for X homing.
 # params_*: 
   # Extra params to pass to pickup/dropoff gcode. Accessible in the gcode via
   # `toolchanger.params_name`.
