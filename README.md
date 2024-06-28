@@ -1,6 +1,6 @@
-# WIP NOT FOR USE
+# WIP NOT FOR GENERAL USE
 
-# klipper-toolchanger
+# <img src="media/klipper_toolchanger_logo.png?raw=true" height="100" align="top" /> klipper-toolchanger
 
 Based on Viesturz's work on [klipper-toolchanger](https://github.com/viesturz/klipper-toolchanger)
 
