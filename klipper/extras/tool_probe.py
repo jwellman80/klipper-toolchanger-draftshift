@@ -46,8 +46,8 @@ class ProbeSessionHelper:
         self.mcu_probe = mcu_probe
         gcode = self.printer.lookup_object('gcode')
         self.dummy_gcode_cmd = gcode.create_gcode_command("", "", {})
-	# Fix for Danger Klipper compatability
-	self.drop_first_result = config.getboolean("drop_first_result", False)
+        # Fix for Danger Klipper compatability
+        self.drop_first_result = config.getboolean("drop_first_result", False)
         # Infer Z position to move to during a probe
         if config.has_section('stepper_z'):
             zconfig = config.getsection('stepper_z')
