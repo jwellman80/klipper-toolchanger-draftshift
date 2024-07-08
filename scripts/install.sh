@@ -37,6 +37,15 @@ function check_download {
             echo "[DOWNLOAD] Incorrect repository found in ${INSTALL_PATH}, remove and rerun install!"
             echo " -> rm -rf \"${INSTALL_PATH}\""
             exit -1
+        else
+            pushd "${INSTALL_PATH}"
+            if ! git pull > /dev/null; then
+                popd
+                echo "Repo dirty, remove and rerun install!"
+                echo " -> rm -rf \"${INSTALL_PATH}\""
+                exit -1
+            fi
+            popd
         fi
     fi
 
