@@ -54,8 +54,8 @@ function check_download {
         pushd "${INSTALL_PATH}"
         if ! git pull > /dev/null; then
             popd
-            echo "Repo dirty, remove and rerun install!"
-            echo " -> rm -rf \"${INSTALL_PATH}\""
+            echo "Repo dirty, remove and rerun install by running the following command!"
+            echo "\trm -rf \"${INSTALL_PATH}\""
             exit -1
         fi
         popd
