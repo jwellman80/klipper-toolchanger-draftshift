@@ -8,7 +8,7 @@ Tool changing extension for [Klipper](https://www.klipper3d.org).
 
 # Klipper Compat Version
 - Klipper > Jun 14, 2024 (1591a51)
-~~- Danger Klipper > Feb 15, 2024 (0cd16e9)~~ No longer compat till they update probe.py
+- ~~Danger Klipper > Feb 15, 2024 (0cd16e9)~~ No longer compat till they update probe.py
 
 # Installation
 
