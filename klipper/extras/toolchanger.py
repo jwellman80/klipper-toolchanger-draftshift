@@ -261,7 +261,7 @@ class Toolchanger:
 
         if select_tool:
             self._configure_toolhead_for_tool(select_tool)
-            self.run_gcode('after_change_gcode', self.after_change_gcode, extra_context)
+            self.run_gcode('after_change_gcode', select_tool.after_change_gcode, extra_context)
             self._set_tool_gcode_offset(select_tool, 0.0)
 
         if should_run_initialize:
