@@ -261,7 +261,8 @@ class Toolchanger:
 
         if select_tool:
             self._configure_toolhead_for_tool(select_tool)
-            self.run_gcode('after_change_gcode', select_tool.after_change_gcode, extra_context)
+            after_change_gcode = select_tool.after_change_gcode if select_tool else self.default_after_change_gcode
+            self.run_gcode('after_change_gcode', after_change_gcode, extra_context)
             self._set_tool_gcode_offset(select_tool, 0.0)
 
         if should_run_initialize:
@@ -275,8 +276,6 @@ class Toolchanger:
                                        (self.name, self.error_message))
 
     def select_tool(self, gcmd, tool, restore_axis, force_pickup=None):
-        self.ensure_homed(gcmd)
-
         if not force_pickup:
             if self.status == STATUS_UNINITALIZED and self.initialize_on == INIT_FIRST_USE:
                 self.initialize()
@@ -290,7 +289,8 @@ class Toolchanger:
                 'Tool %s already selected' % tool.name if tool else None)
                 return
 
-            self.status = STATUS_CHANGING
+        self.ensure_homed(gcmd)
+        self.status = STATUS_CHANGING
         toolhead_position = self.gcode_move.get_status()['position']
         gcode_position = self.gcode_move.get_status()['gcode_position']
         extra_z_offset = toolhead_position[2] - gcode_position[2] - self.active_tool.gcode_z_offset if self.active_tool else 0.0
@@ -320,8 +320,9 @@ class Toolchanger:
         if tool is not None:
             self.run_gcode('tool.pickup_gcode',
                            tool.pickup_gcode, extra_context)
+            after_change_gcode = self.tool.after_change_gcode if self.tool else self.default_after_change_gcode
             self.run_gcode('after_change_gcode',
-                           tool.after_change_gcode, extra_context)
+                           after_change_gcode, extra_context)
 
         self._restore_axis(gcode_position, restore_axis, tool)
 
