@@ -261,7 +261,7 @@ class Toolchanger:
 
         if select_tool:
             self._configure_toolhead_for_tool(select_tool)
-            after_change_gcode = select_tool.after_change_gcode if select_tool else self.default_after_change_gcode
+            after_change_gcode = select_tool.after_change_gcode if select_tool.after_change_gcode else self.default_after_change_gcode
             self.run_gcode('after_change_gcode', after_change_gcode, extra_context)
             self._set_tool_gcode_offset(select_tool, 0.0)
 
@@ -308,7 +308,7 @@ class Toolchanger:
             "SAVE_GCODE_STATE NAME=_toolchange_state")
 
         if not force_pickup:
-           before_change_gcode = self.active_tool.before_change_gcode if self.active_tool else self.default_before_change_gcode
+           before_change_gcode = self.active_tool.before_change_gcode if self.active_tool && self.active_tool.before_change_gcode else self.default_before_change_gcode
            self.run_gcode('before_change_gcode', before_change_gcode, extra_context)
         self.gcode.run_script_from_command("SET_GCODE_OFFSET X=0.0 Y=0.0 Z=0.0")
 
@@ -320,7 +320,7 @@ class Toolchanger:
         if tool is not None:
             self.run_gcode('tool.pickup_gcode',
                            tool.pickup_gcode, extra_context)
-            after_change_gcode = self.tool.after_change_gcode if self.tool else self.default_after_change_gcode
+            after_change_gcode = tool.after_change_gcode if tool.after_change_gcode else self.default_after_change_gcode
             self.run_gcode('after_change_gcode',
                            after_change_gcode, extra_context)
 
