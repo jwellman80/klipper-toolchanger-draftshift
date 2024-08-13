@@ -63,7 +63,7 @@ class ToolProbeEndstop:
 
     def add_probe(self, config, tool_probe):
         if (tool_probe.tool in self.tool_probes):
-            raise config.error("Duplicate tool probe nr: " + tool_probe.tool)
+            raise config.error(f"Duplicate tool number in {tool_probe.name}")
         self.tool_probes[tool_probe.tool] = tool_probe
         self.mcu_probe.add_mcu(tool_probe.mcu_probe)
 
