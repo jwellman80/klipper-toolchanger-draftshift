@@ -1,4 +1,6 @@
-## Prusa slicer config
+# Slicer config
+
+## Prusa
 
 **Start Gcode** - all must be a single line
 ```
@@ -10,7 +12,7 @@ PRINT_START  TOOL_TEMP={first_layer_temperature[initial_tool]} {if is_extruder_u
 M104 S{temperature[next_extruder]} T[next_extruder] ; set new tool temperature so it can start heating while changing
 ```
 
-## Cura slicer config
+## Cura
 
 **Start Gcode** - all must be a single line
 ```
