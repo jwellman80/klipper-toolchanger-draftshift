@@ -33,7 +33,7 @@ wget -O - https://raw.githubusercontent.com/Stealthchanger/klipper-toolchanger/m
 
 **tool configs** one per tool, 2 examples to follow, they do not need to be names AVR<n>
 - [tool-AVR0.cfg](examples/tool-AVR0.cfg)
-- [tool-AVR1.cfg](examples/tool-AVR0.cfg)
+- [tool-AVR1.cfg](examples/tool-AVR1.cfg)
 
 **usermacros and extra-macro-examples** are a good start for user macros and can be modified.  Make sure to keep the `_TOOL` and `_TOOLCHANGER` macros in the right macros as they add special features.
 
@@ -43,7 +43,7 @@ wget -O - https://raw.githubusercontent.com/Stealthchanger/klipper-toolchanger/m
 **Optional** leds is based on the offical [StealthBurner leds](https://github.com/VoronDesign/Voron-Stealthburner/blob/main/Firmware/stealthburner_leds.cfg) and converted to multi tool aware
 - [toolchanger-leds.cfg](examples/toolchanger-leds.cfg)
 - [tool-AVR0-leds.cfg](examples/tool-AVR0-leds.cfg)
-- [tool-AVR1-leds.cfg](examples/tool-AVR0-leds.cfg)
+- [tool-AVR1-leds.cfg](examples/tool-AVR1-leds.cfg)
 
 **Optional** for calibration ball probe or modified sexcbolt
 - [calibrate-offsets.cfg](examples/calibrate-offsets.cfg)
