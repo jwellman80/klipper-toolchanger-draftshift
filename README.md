@@ -38,7 +38,7 @@ wget -O - https://raw.githubusercontent.com/Stealthchanger/klipper-toolchanger/m
 **usermacros and extra-macro-examples** are a good start for user macros and can be modified.  Make sure to keep the `_TOOL` and `_TOOLCHANGER` macros in the right macros as they add special features.
 
 - [toolchanger-usermacros.cfg](examples/toolchanger-usermacros.cfg)
-- [toolchanger-extra-macro-examples.cfg](examples/toolchanger-extra-macro-examples.cfg)
+- **Optional** [toolchanger-extra-macro-examples.cfg](examples/toolchanger-extra-macro-examples.cfg)
 
 **Optional** leds is based on the offical [StealthBurner leds](https://github.com/VoronDesign/Voron-Stealthburner/blob/main/Firmware/stealthburner_leds.cfg) and converted to multi tool aware
 - [toolchanger-leds.cfg](examples/toolchanger-leds.cfg)
