@@ -35,10 +35,10 @@ wget -O - https://raw.githubusercontent.com/Stealthchanger/klipper-toolchanger/m
 - [tool-AVR0.cfg](examples/tool-AVR0.cfg)
 - [tool-AVR1.cfg](examples/tool-AVR1.cfg)
 
-**usermacros and extra-macro-examples** are a good start for user macros and can be modified.  Make sure to keep the `_TOOL` and `_TOOLCHANGER` macros in the right macros as they add special features.
+**usermacros and extra-macros** are a good start for user macros and can be modified.  Make sure to keep the `_TOOL` and `_TOOLCHANGER` macros in the right macros as they add special features.
 
 - [toolchanger-usermacros.cfg](examples/toolchanger-usermacros.cfg)
-- **Optional** [toolchanger-extra-macro-examples.cfg](examples/toolchanger-extra-macro-examples.cfg)
+- [toolchanger-extra-macros.cfg](examples/toolchanger-extra-macros.cfg)
 
 **Optional** leds is based on the offical [StealthBurner leds](https://github.com/VoronDesign/Voron-Stealthburner/blob/main/Firmware/stealthburner_leds.cfg) and converted to multi tool aware
 - [toolchanger-leds.cfg](examples/toolchanger-leds.cfg)
@@ -53,7 +53,7 @@ wget -O - https://raw.githubusercontent.com/Stealthchanger/klipper-toolchanger/m
 
 **Make sure that `safe_z_home` is not defined as homing needs to be overridden in [toolchanger-homing.cfg](macros/toolchanger-homing.cfg)**
 
-**If you choose to not use `toolchanger-extra-macro-examples.cfg` please make sure to use the `_TOOLCHANGER_PRINT_START_START` and `_TOOLCHANGER_PRINT_START_END` in your `PRINT_START` macro, also `_TOOLCHANGER_PRINT_END_START` and `_TOOLCHANGER_PRINT_END_END` in your `PRINT_END` macro.  These are important to initialize the toolchanger as well as special protection calls.**
+**If you choose to not use `toolchanger-extra-macros.cfg` please make sure to use the `_TOOLCHANGER_PRINT_START_START` and `_TOOLCHANGER_PRINT_START_END` in your `PRINT_START` macro, also `_TOOLCHANGER_PRINT_END_START` and `_TOOLCHANGER_PRINT_END_END` in your `PRINT_END` macro.  These are important to initialize the toolchanger as well as special protection calls.**
 
 # Components
 
