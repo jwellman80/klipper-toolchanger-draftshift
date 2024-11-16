@@ -61,6 +61,7 @@ class Toolchanger:
         self.sensorless_y = config.getboolean('sensorless_y', False)
         self.homing_usetap = config.getboolean('homing_usetap', True)
         self.homing_toolless = config.getboolean('homing_toolless', False)
+        self.tools_preheat = config.getboolean('tools_preheat', True)
         self.homing_rebound_y = config.getfloat('homing_rebound_y', config.getfloat('homing_safe_y', 20.0))
         config.get('extruder', None)
         config.get('fan', None)

@@ -64,6 +64,9 @@ and will provide a default value for all of its tools.
 # homing_rebound_y: 20.0
   # The amount to rebound on the Y axis after homing Y, this is important for
   # switch homing so have the proper distance for X homing.
+# tools_preheat: True
+  # Run the preheat loop in PRINT_START on the values the slicer sends, or let
+  # tools heat on first use.
 # params_*: 
   # Extra params to pass to pickup/dropoff gcode. Accessible in the gcode via
   # `toolchanger.params_name`.
