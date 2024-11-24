@@ -129,6 +129,7 @@ class Toolchanger:
                 'homing_usetap': self.homing_usetap,
                 'homing_toolless': self.homing_toolless,
                 'homing_rebound_y': self.homing_rebound_y,
+                'tools_preheat': self.tools_preheat,
                 'tool': self.active_tool.name if self.active_tool else None,
                 'tool_number': self.active_tool.tool_number if self.active_tool else -1,
                 'tool_numbers': self.tool_numbers,
