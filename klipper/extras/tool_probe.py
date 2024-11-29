@@ -148,6 +148,8 @@ class ProbeSessionHelper:
         retries = 0
         positions = []
         sample_count = params['samples']
+        if drop_first_result:
+            self._probe(params['probe_speed'])
         while len(positions) < sample_count:
             # Probe position
             pos = self._probe(params['probe_speed'])
