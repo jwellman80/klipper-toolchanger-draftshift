@@ -19,8 +19,9 @@ crash_gcode:
 [tool_probe T1]
 pin: !et1:PB6
 tool: 1
-z_offset:  -0.75
+z_offset: -0.75
 speed: 5.0
+drop_first_result: True
 samples: 3
 samples_result: median
 sample_retract_dist: 2.0
