@@ -150,7 +150,7 @@ class ProbeSessionHelper:
         sample_count = params['samples']
         if self.drop_first_result:
             pos = self._probe(params['probe_speed'])
-            gcmd.respond_info("that was just a practice, now on to the main event...")
+            gcmd.respond_info("dropping probe result, settling")
             # Retract
             toolhead.manual_move(
                 probexy + [pos[2] + params['sample_retract_dist']],
