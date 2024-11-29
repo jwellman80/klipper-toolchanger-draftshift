@@ -149,7 +149,11 @@ class ProbeSessionHelper:
         positions = []
         sample_count = params['samples']
         if drop_first_result:
-            self._probe(params['probe_speed'])
+            pos = self._probe(params['probe_speed'])
+            # Retract
+            toolhead.manual_move(
+                probexy + [pos[2] + params['sample_retract_dist']],
+                params['lift_speed'])
         while len(positions) < sample_count:
             # Probe position
             pos = self._probe(params['probe_speed'])
