@@ -148,7 +148,7 @@ class ProbeSessionHelper:
         retries = 0
         positions = []
         sample_count = params['samples']
-        if drop_first_result:
+        if self.drop_first_result:
             pos = self._probe(params['probe_speed'])
             # Retract
             toolhead.manual_move(
