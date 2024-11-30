@@ -152,7 +152,7 @@ class ProbeSessionHelper:
         while len(positions) < sample_count:
             # Probe position
             pos = self._probe(params['probe_speed'])
-            if self.drop_first_result and first_probe:
+            if check_drop and self.drop_first_result and first_probe:
                 gcmd.respond_info("dropping probe result, settling")
             else:
                 positions.append(pos)
