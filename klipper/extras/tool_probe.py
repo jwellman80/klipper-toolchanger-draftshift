@@ -139,7 +139,7 @@ class ProbeSessionHelper:
         gcode.respond_info("probe at %.3f,%.3f is z=%.6f"
                            % (epos[0], epos[1], epos[2]))
         return epos[:3]
-    def run_probe(self, gcmd):
+    def run_probe(self, gcmd, check_drop=True):
         if not self.multi_probe_pending:
             self._probe_state_error()
         params = self.get_probe_params(gcmd)
