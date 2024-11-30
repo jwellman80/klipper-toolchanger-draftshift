@@ -148,25 +148,23 @@ class ProbeSessionHelper:
         retries = 0
         positions = []
         sample_count = params['samples']
-        if self.drop_first_result:
-            pos = self._probe(params['probe_speed'])
-            gcmd.respond_info("dropping probe result, settling")
-            # Retract
-            toolhead.manual_move(
-                probexy + [pos[2] + params['sample_retract_dist']],
-                params['lift_speed'])
+        first_probe = True
         while len(positions) < sample_count:
             # Probe position
             pos = self._probe(params['probe_speed'])
-            positions.append(pos)
-            # Check samples tolerance
-            z_positions = [p[2] for p in positions]
-            if max(z_positions)-min(z_positions) > params['samples_tolerance']:
-                if retries >= params['samples_tolerance_retries']:
-                    raise gcmd.error("Probe samples exceed samples_tolerance")
-                gcmd.respond_info("Probe samples exceed tolerance. Retrying...")
-                retries += 1
-                positions = []
+            if check_drop and self.drop_first_result and first_probe:
+                gcmd.respond_info("dropping probe result, settling")
+            else:
+                positions.append(pos)
+                # Check samples tolerance
+                z_positions = [p[2] for p in positions]
+                if max(z_positions)-min(z_positions) > params['samples_tolerance']:
+                    if retries >= params['samples_tolerance_retries']:
+                        raise gcmd.error("Probe samples exceed samples_tolerance")
+                    gcmd.respond_info("Probe samples exceed tolerance. Retrying...")
+                    retries += 1
+                    positions = []
+            first_probe = False
             # Retract
             if len(positions) < sample_count:
                 toolhead.manual_move(
