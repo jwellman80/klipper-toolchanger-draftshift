@@ -5,8 +5,7 @@
 # This file may be distributed under the terms of the GNU GPLv3 license.
 #
 # Contribution 2024 by Justin F. Hallett <thesin@southofheaven.org>
-from . import probe
-from .probe import ProbeCommandHelper
+from .probe import ProbeCommandHelper, HomingViaProbeHelper, calc_probe_z_average
 
 # Virtual endstop, using a tool attached Z probe in a toolchanger setup.
 # Tool endstop change may be done either via SET_ACTIVE_TOOL_PROBE TOOL=99
@@ -24,8 +23,8 @@ class ToolProbeEndstop:
         self.crash_detection_active = False
         self.crash_lasttime = 0.
         self.mcu_probe = EndstopRouter(self.printer)
-        self.homing_helper = probe.HomingViaProbeHelper(config, self.mcu_probe)
-        self.cmd_helper = TCProbeCommandHelper(config, self, self.mcu_probe.query_endstop)
+        self.homing_helper = HomingViaProbeHelper(config, self.mcu_probe)
+        self.cmd_helper = ProbeCommandHelper(config, self, self.mcu_probe.query_endstop)
 
         # Emulate the probe object, since others rely on this.
         if self.printer.lookup_object('probe', default=None):
@@ -251,9 +250,7 @@ class EndstopRouter:
         return self.active_mcu.get_position_endstop()
 
 
-class TCProbeCommandHelper(ProbeCommandHelper):
-    def __init__(self, config, probe, query_endstop=None):
-        ProbeCommandHelper.__init__(self, config, probe, query_endstop)
+class ProbeCommandHelper(ProbeCommandHelper):
     def cmd_PROBE_ACCURACY(self, gcmd):
         params = self.probe.get_probe_params(gcmd)
         sample_count = gcmd.get_int("SAMPLES", 10, minval=1)
@@ -291,8 +288,8 @@ class TCProbeCommandHelper(ProbeCommandHelper):
         max_value = max([p[2] for p in positions])
         min_value = min([p[2] for p in positions])
         range_value = max_value - min_value
-        avg_value = probe.calc_probe_z_average(positions, 'average')[2]
-        median = probe.calc_probe_z_average(positions, 'median')[2]
+        avg_value = calc_probe_z_average(positions, 'average')[2]
+        median = calc_probe_z_average(positions, 'median')[2]
         # calculate the standard deviation
         deviation_sum = 0
         for i in range(len(positions)):
