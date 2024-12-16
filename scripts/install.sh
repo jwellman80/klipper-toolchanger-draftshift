@@ -1,10 +1,10 @@
 #!/bin/bash
 
-REPO="DraftShift/klipper-toolchanger.git"
+REPO="jwellman80/klipper-toolchanger.git"
 SERVICE="/etc/systemd/system/ToolChanger.service"
 CONFIG_PATH="${HOME}/printer_data/config"
 KLIPPER_PATH="${HOME}/klipper"
-INSTALL_PATH="${HOME}/klipper-toolchanger"
+INSTALL_PATH="${HOME}/klipper-toolchanger_sc_alpha"
 
 set -eu
 export LC_ALL=C
@@ -113,7 +113,7 @@ function link_macros {
 function copy_examples {
     echo -n "[INSTALL] Copying in examples to Klipper..."
     for file in "${INSTALL_PATH}"/examples/*.cfg; do
-        if ! cp -n ${file} "${CONFIG_PATH}"/; then
+        if ! ln -sfn ${file} "${CONFIG_PATH}"/; then
             echo " failed!"
             exit -1
         fi
