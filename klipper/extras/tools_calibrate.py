@@ -128,9 +128,8 @@ class ToolsCalibrate:
         location = self.locate_sensor(gcmd)
         self.last_result = [location[i] - self.sensor_location[i] for i in
                             range(3)]
-        self.gcode.respond_info("Tool offset is %.6f,%.6f,%.6f"
-                                % (self.last_result[0], self.last_result[1],
-                                   self.last_result[2]))
+        self.gcode.respond_info("Paste into your config file for tool:\n\ngcode_x_offset: %.6f\ngcode_y_offset: %.6f\ngcode_z_offset: %.6f\n"
+                                % (self.last_result[0], self.last_result[1],self.last_result[2]))
 
     cmd_TOOL_CALIBRATE_SAVE_TOOL_OFFSET_help = "Save tool offset calibration to config"
 
