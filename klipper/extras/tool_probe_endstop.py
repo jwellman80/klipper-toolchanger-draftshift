@@ -119,6 +119,7 @@ class ToolProbeEndstop:
 
     cmd_DETECT_ACTIVE_TOOL_PROBE_help = "Detect which tool is active by identifying a probe that is NOT triggered"
     def cmd_DETECT_ACTIVE_TOOL_PROBE(self, gcmd):
+        self.toolhead.wait_moves()
         active_tools = self._query_open_tools()
         if len(active_tools) == 1 :
             active = active_tools[0]
@@ -183,13 +184,14 @@ class ToolProbeEndstop:
         if self.crash_detection_active:
             self.crash_detection_active = False
             self.crash_gcode.run_gcode_from_command()
-            pause_resume = self.printer.lookup_object('pause_resume')
-            if pause_resume:
-                gcode = self.printer.lookup_object('gcode')
-                gcmd = gcode.create_gcode_command("", "", {})
-                pause_resume.cmd_PAUSE(gcmd)
-            else:
-                gcmd.respond_info("PauseResume module not loaded")
+            # pause_resume = self.printer.lookup_object('pause_resume')
+            # if pause_resume:
+            #     gcode = self.printer.lookup_object('gcode')
+            #     gcmd = gcode.create_gcode_command("PAUSE", "PAUSE", {})
+            #     pause_resume.cmd_PAUSE(gcmd)
+            # else:
+            #     # pretty sure this will cause an ecemption as gcmd does not exist here.
+            #     gcmd.respond_info("PauseResume module not loaded")
 
 # Routes commands to the selected tool probe endstop.
 class EndstopRouter:
