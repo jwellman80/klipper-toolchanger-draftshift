@@ -1,10 +1,10 @@
 #!/bin/bash
 
-REPO="jwellman80/klipper-toolchanger.git"
+REPO="jwellman80/klipper-toolchanger-draftshift.git"
 SERVICE="/etc/systemd/system/ToolChanger.service"
 CONFIG_PATH="${HOME}/printer_data/config"
 KLIPPER_PATH="${HOME}/klipper"
-INSTALL_PATH="${HOME}/klipper-toolchanger_sc_alpha"
+INSTALL_PATH="${HOME}/klipper-toolchanger-draftshift"
 
 set -eu
 export LC_ALL=C
