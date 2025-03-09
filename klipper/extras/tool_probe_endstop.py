@@ -87,6 +87,7 @@ class ToolProbeEndstop:
         candidates = []
         for tool_probe in self.tool_probes.values():
             triggered = tool_probe.mcu_probe.query_endstop(print_time)
+            tool_probe._button_handler(print_time, triggered)
             self.last_query[tool_probe.tool] = triggered
             if not triggered:
                 candidates.append(tool_probe)

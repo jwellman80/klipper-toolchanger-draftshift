@@ -30,6 +30,8 @@ class ToolProbe:
 
     def _button_handler(self, eventtime, is_triggered):
         self.endstop.note_probe_triggered(self, eventtime, is_triggered)
+        tool_obj = self.printer.lookup_object('tool ' + self.name.split()[1])
+        tool_obj.handle_detect(eventtime, not is_triggered)
 
     def get_probe_params(self, gcmd=None):
         return self.probe_session.get_probe_params(gcmd)
