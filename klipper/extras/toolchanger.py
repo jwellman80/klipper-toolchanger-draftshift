@@ -115,8 +115,6 @@ class Toolchanger:
                                     self.cmd_SAVE_TOOL_PARAMETER)
         self.gcode.register_command("VERIFY_TOOL_DETECTED",
                                     self.cmd_VERIFY_TOOL_DETECTED)
-        self.gcode.register_command("TOOLCHANGER_RESUME", 
-                                    self.cmd_TOOLCHANGER_RESUME)
 
     def _handle_home_rails_begin(self, homing_state, rails):
         if self.initialize_on == INIT_ON_HOME and self.status == STATUS_UNINITALIZED:
@@ -262,30 +260,6 @@ class Toolchanger:
                                 self.active_tool.t_command_restore_axis)
         self.test_tool_selection(gcmd, restore_axis)
 
-    def cmd_TOOLCHANGER_RESUME(self, gcmd):
-        tool = self.toolchange_extra_context['new-tool']
-        after_change_gcode = tool.after_change_gcode if tool.after_change_gcode else self.default_after_change_gcode
-        self.run_gcode('after_change_gcode',
-                        after_change_gcode, self.toolchange_extra_context)
-
-        self._restore_axis(self.toolchange_extra_context['gcode_position'], self.toolchange_extra_context['restore_axis'], tool)
-
-        self.gcode.run_script_from_command(
-            "RESTORE_GCODE_STATE NAME=_toolchange_state MOVE=0")
-        # Restore state sets old gcode offsets, fix that.
-        if tool is not None:
-            self._set_tool_gcode_offset(tool, self.toolchange_extra_context['extra_z_offset'])
-
-        self.status = STATUS_READY
-        if tool:
-            gcmd.respond_info(
-                'Selected tool %s (%s)' % (str(tool.tool_number), tool.name))
-        else:
-            gcmd.respond_info('Tool unselected')
-
-        self.toolchange_extra_context = []
-
-
     def initialize(self, select_tool=None):
         if self.status == STATUS_CHANGING:
             raise Exception('Cannot initialize while changing tools')
@@ -373,17 +347,7 @@ class Toolchanger:
                 self.status = STATUS_CHANGING
                 self.run_gcode('tool.pickup_gcode',
                             tool.pickup_gcode, self.toolchange_extra_context)
-                if self.validate_detected_tool(tool, gcmd) == False:
-                    gcmd.respond_info("Tool pickup failed.  Place tool in shuttle and run T%s" % (str(tool.tool_number)))
-                    printer_state = self.printer.lookup_object('print_stats').state
-                    if printer_state == "printing":
-                        pause_resume = self.printer.lookup_object('pause_resume')
-                        if pause_resume:
-                            pause_resume.cmd_PAUSE(gcmd)
-                            gcmd.respond_info("Exiting method after pause.")
-                        else:
-                            gcmd.respond_info("PauseResume module not loaded")
-                    return
+                # ideally we detect an error here and wait for user intervention to continue.
 
             after_change_gcode = tool.after_change_gcode if tool.after_change_gcode else self.default_after_change_gcode
             self.run_gcode('after_change_gcode',
@@ -405,6 +369,21 @@ class Toolchanger:
         else:
             gcmd.respond_info('Tool unselected')
 
+        if self.validate_detected_tool(tool, gcmd) == False:
+            printer_state = self.printer.lookup_object('print_stats').state
+            if printer_state == "printing":
+                gcmd.respond_info("Tool pickup failed.  Place tool in shuttle and run Resume")
+                pause_resume = self.printer.lookup_object('pause_resume')
+                if pause_resume:
+                    pause_resume.cmd_PAUSE(gcmd)
+                    gcmd.respond_info("Exiting method after pause.")
+                else:
+                    gcmd.respond_info("PauseResume module not loaded")
+            return
+
+        self.gcode.run_script_from_command(
+            "START_TOOL_PROBE_CRASH_DETECTION T=%s" % (str(tool.tool_number))
+        )
         self.toolchange_extra_context = []
 
     def test_tool_selection(self, gcmd, restore_axis):
