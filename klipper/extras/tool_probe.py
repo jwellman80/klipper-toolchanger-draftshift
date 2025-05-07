@@ -126,7 +126,8 @@ class ProbeSessionHelper:
         pos = toolhead.get_position()
         pos[2] = self.z_position
         try:
-            epos = self.mcu_probe.probing_move(pos, speed)
+            phoming = self.printer.lookup_object('homing')
+            epos = phoming.probing_move(self.mcu_probe, pos, speed)
         except self.printer.command_error as e:
             reason = str(e)
             if "Timeout during endstop homing" in reason:
@@ -139,7 +140,7 @@ class ProbeSessionHelper:
         gcode.respond_info("probe at %.3f,%.3f is z=%.6f"
                            % (epos[0], epos[1], epos[2]))
         return epos[:3]
-    def run_probe(self, gcmd):
+    def run_probe(self, gcmd, check_drop=True):
         if not self.multi_probe_pending:
             self._probe_state_error()
         params = self.get_probe_params(gcmd)
@@ -152,7 +153,7 @@ class ProbeSessionHelper:
         while len(positions) < sample_count:
             # Probe position
             pos = self._probe(params['probe_speed'])
-            if self.drop_first_result and first_probe:
+            if check_drop and self.drop_first_result and first_probe:
                 gcmd.respond_info("dropping probe result, settling")
             else:
                 positions.append(pos)
