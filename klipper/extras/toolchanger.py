@@ -165,15 +165,12 @@ class Toolchanger:
         self.has_detection = any([t.detect_state != DETECT_UNAVAILABLE for t in self.tools.values()])
         all_detection = all([t.detect_state != DETECT_UNAVAILABLE for t in self.tools.values()])
         if self.has_detection and not all_detection:
-            config = self.printer.lookup_object('configfile')
-            raise config.error("Some tools missing detection pin")
+            raise self.config.error("Some tools missing detection pin")
 
     cmd_INITIALIZE_TOOLCHANGER_help = "Initialize the toolchanger"
 
     def cmd_INITIALIZE_TOOLCHANGER(self, gcmd):
         tool = self._gcmd_tool(gcmd, None)
-        if tool is None and self.has_detection:
-            tool = self.require_detected_tool(gcmd)
         self.initialize(tool)
 
     cmd_SELECT_TOOL_help = 'Select active tool'
@@ -307,17 +304,18 @@ class Toolchanger:
 
         self.ensure_homed(gcmd)
         self.status = STATUS_CHANGING
-        toolhead_position = self.gcode_move.get_status()['position']
-        gcode_position = self.gcode_move.get_status()['gcode_position']
-        extra_z_offset = toolhead_position[2] - gcode_position[2] - self.active_tool.gcode_z_offset if self.active_tool else 0.0
+        gcode_status = self.gcode_move.get_status()
+        gcode_position = gcode_status['gcode_position']
+        current_z_offset = gcode_status['homing_origin'][2]
+        extra_z_offset = current_z_offset - (self.active_tool.gcode_z_offset if self.active_tool else 0.0)
 
         extra_context = {
             'dropoff_tool': self.active_tool.name if self.active_tool else None,
             'pickup_tool': tool.name if tool else None,
             'restore_position': self._position_with_tool_offset(
-                gcode_position, restore_axis, tool),
+                gcode_position, restore_axis, tool, extra_z_offset),
             'start_position': self._position_with_tool_offset(
-                gcode_position, 'xyz', tool)
+                gcode_position, 'xyz', tool, extra_z_offset)
         }
 
         self.gcode.run_script_from_command(
@@ -414,9 +412,9 @@ class Toolchanger:
         for tool in self.tools.values():
             if tool.detect_state == DETECT_PRESENT:
                 detected = tool
-                detected_names.add(tool.name)
+                detected_names.append(tool.name)
         if len(detected_names) > 1:
-            raise gcmd.error("Multiple tools detected: %s" % detected_names)
+            raise gcmd.error("Multiple tools detected: %s" % (detected_names,))
         if detected is None:
             raise gcmd.error("No tool detected")
         return detected
@@ -434,6 +432,8 @@ class Toolchanger:
             return
         toolhead = self.printer.lookup_object('toolhead')
         toolhead.wait_moves()
+        # Wait some to allow tool sensors to update
+        toolhead.dwell(.2)
         self.validate_detected_tool(expected, gcmd)
 
     def _configure_toolhead_for_tool(self, tool):
@@ -463,7 +463,7 @@ class Toolchanger:
                 (-tool.gcode_x_offset, -tool.gcode_y_offset,
                  -tool.gcode_z_offset))
 
-    def _position_with_tool_offset(self, position, axis, tool):
+    def _position_with_tool_offset(self, position, axis, tool, extra_z_offset = 0.0):
         result = {}
         for i in axis:
             index = XYZ_TO_INDEX[i]
@@ -475,7 +475,7 @@ class Toolchanger:
                 elif index == 1:
                     offset = tool.gcode_y_offset
                 elif index == 2:
-                    offset = tool.gcode_z_offset
+                    offset = tool.gcode_z_offset + extra_z_offset
                 v += offset
             result[INDEX_TO_XYZ[index]] = v
         return result
