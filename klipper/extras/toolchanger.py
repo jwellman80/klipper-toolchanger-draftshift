@@ -171,8 +171,6 @@ class Toolchanger:
 
     def cmd_INITIALIZE_TOOLCHANGER(self, gcmd):
         tool = self._gcmd_tool(gcmd, None)
-        if tool is None and self.has_detection:
-            tool = self.require_detected_tool(gcmd)
         self.initialize(tool)
 
     cmd_SELECT_TOOL_help = 'Select active tool'
