@@ -174,19 +174,21 @@ function install_service {
 function check_includes {
     echo -n "[CHECK-INSTALL] Checking for missing includes..."
     found=0
-    for file in "${INSTALL_PATH}"/macros/*.cfg "${INSTALL_PATH}"/examples/toolchanger-usermacros.cfg; do
-        filename=$(basename ${file});
-        if ! grep -qE "^([/s|/t]+)?.include ${filename}.$" "${CONFIG_PATH}"/printer.cfg; then
-            if [ $found -lt 1 ]; then
-                echo " found!"
-                found=1
-            fi
-            echo " - Missing [include ${filename}] in printer.cfg"
-        fi
-    done
-    if [ $found -lt 1 ]; then
-        echo " complete!"
+    if grep -qE "^([/s|/t]+)?.include toolchanger-includes.cfg.$" "${CONFIG_PATH}"/printer.cfg; then
+        found=1
+        echo " - Found [include toolchanger-includes.cfg] in printer.cfg"
     fi
+
+    if [ $found -lt 1 ]; then
+        for file in "${INSTALL_PATH}"/macros/*.cfg "${INSTALL_PATH}"/examples/toolchanger-usermacros.cfg; do
+            filename=$(basename ${file});
+            if ! grep -qE "^([/s|/t]+)?.include ${filename}.$" "${CONFIG_PATH}"/printer.cfg; then
+                echo " - Missing [include ${filename}] in printer.cfg"
+            fi
+        done
+    fi
+
+    echo " complete!"
     echo
 }
 
