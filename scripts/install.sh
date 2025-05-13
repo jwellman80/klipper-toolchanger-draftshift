@@ -176,7 +176,6 @@ function check_includes {
     incall=0
     if grep -qE "^([/s|/t]+)?.include toolchanger-includes.cfg.$" "${CONFIG_PATH}"/printer.cfg; then
         incall=1
-        echo " - Found [include toolchanger-includes.cfg] in printer.cfg"
     fi
 
     found=0
