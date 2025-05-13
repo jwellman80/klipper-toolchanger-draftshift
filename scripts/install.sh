@@ -209,9 +209,11 @@ function restart_klipper {
     echo
 }
 
-printf "\n======================================\n"
-echo "- Klipper toolchanger install script -"
-printf "======================================\n\n"
+echo
+echo "=============================================="
+echo "- Klipper toolchanger install script         -"
+echo "=============================================="
+echo
 
 doinstall=1;
 withklipper=1;
@@ -245,8 +247,8 @@ if [ $doinstall -gt 0 ]; then
         restart_klipper
     fi
 
-    printf "=============================================\n"
-    echo "- If you are upgrading make sure to           -"
-    echo "- check for changes in the user config files  -"
-    printf "=============================================\n\n"
+    echo "=============================================="
+    echo "- If you are upgrading make sure to          -"
+    echo "- check for changes in the user config files -"
+    echo "=============================================="
 fi
