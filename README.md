@@ -50,7 +50,7 @@ wget -O - https://raw.githubusercontent.com/Stealthchanger/klipper-toolchanger/m
 - [calibrate-offsets-macros.cfg](macros/calibrate-offsets-macros.cfg)
 
 **Optional** for hotend fan rpm detection (requires all hotend fans to be configured with tachometer)
-- [toolchanger-fan-stall-detect.cfg](examples/toolchanger-fan-stall-detect.cfg)
+- [toolchanger-fan-stall-detect-macros.cfg](examples/toolchanger-fan-stall-detect-macros.cfg)
 
 **Optional** macros to set and use the proper input shaper for the active tool
 - [toolchanger-resonance-tester-macros.cfg](examples/toolchanger-resonance-tester-macros.cfg)
