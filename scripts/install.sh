@@ -194,7 +194,7 @@ function check_includes {
     fi
 
     if [ $found -lt 1 ]; then
-        echo -n " complete!"
+        echo " complete!"
     fi
     echo
 }
