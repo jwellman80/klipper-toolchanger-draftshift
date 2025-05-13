@@ -52,6 +52,11 @@ wget -O - https://raw.githubusercontent.com/Stealthchanger/klipper-toolchanger/m
 **Optional** for hotend fan rpm detection (requires all hotend fans to be configured with tachometer)
 - [toolchanger-fan-stall-detect.cfg](examples/toolchanger-fan-stall-detect.cfg)
 
+**Optional** macros to set and use the proper input shaper for the active tool
+- [toolchanger-resonance-tester-macros.cfg](examples/toolchanger-resonance-tester-macros.cfg)
+
+**Optionally** you can just include [toolchanger-includes.cfg](examples/toolchanger-includes.cfg) instead as a convience include.
+
 [PRINT_START slicer info](PRINT_START.md)
 
 **Make sure that `safe_z_home` is not defined as homing needs to be overridden in [toolchanger-homing.cfg](macros/toolchanger-homing.cfg)**
