@@ -36,6 +36,7 @@ function check_download {
         if [[ "$(cd "${INSTALL_PATH}" && git remote get-url origin)" != *"${REPO}"* ]]; then
             echo "[DOWNLOAD] Incorrect repository found in ${INSTALL_PATH}, remove and rerun install!"
             echo " -> rm -rf \"${INSTALL_PATH}\""
+            echo
             exit -1
         fi
     fi
@@ -47,18 +48,20 @@ function check_download {
             echo " complete!"
         else
             echo " failed!"
+            echo
             exit -1
         fi
     else
         echo "[DOWNLOAD] repository already found locally. [UPDATING]"
-        pushd "${INSTALL_PATH}"
+        pushd "${INSTALL_PATH}" > /dev/null
         if ! git pull > /dev/null; then
             popd
             echo "Repo dirty, remove and rerun install by running the following command!"
             echo "\trm -rf \"${INSTALL_PATH}\""
+            echo
             exit -1
         fi
-        popd
+        popd > /dev/null
     fi
     echo
 }
@@ -76,6 +79,7 @@ function remove_links {
         done
     done
     echo " complete!"
+    echo
 
     if [ -f "${SERVICE}" ]; then
         echo -n "[UNINSTALL] Service..."
@@ -141,8 +145,9 @@ function add_updater {
     else
         echo "[INSTALL] Moonraker update entry found. [SKIPPED]"
     fi
+    echo
 
-    if ! grep ToolChanger "${CONFIG_PATH}"/../moonraker.asvc; then
+    if ! grep -q ToolChanger "${CONFIG_PATH}"/../moonraker.asvc; then
         echo -n "[INSTALL] Adding update manager to moonraker.conf..."
         echo -e "\nToolChanger" >> "${CONFIG_PATH}"/../moonraker.asvc
         echo " complete!"
